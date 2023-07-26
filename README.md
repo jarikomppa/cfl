@@ -1,4 +1,4 @@
-# CFL3 release 2
+# CFL3 release 3
 
 Copyright
 
@@ -38,19 +38,19 @@ and you should find me.
 
 Files contained in this release:
 
-readme.txt       - this file
-cfl3.cpp         - the main cpp file
-cfl3.h           - header file
-cfl3_none.cpp    - no-compression packer
-cfl3_zlib.cpp    - zlib packer (requires zlib)
-cfl3_delta16.cpp - 16-bit delta preprocessor
-cfl3_delta32.cpp - 32-bit delta preprocessor
-cfl3_delta8.cpp  - 8-bit delta preprocessor
-makecfl.cpp      - source to makecfl utility
-testcfl.cpp      - testing and debugging utility source
-makecfl.exe      - win32 console application, compiled with 'none' and 
-                   'zlib' support.
-                  
+readme.txt                      - this file
+changes.txt                     - change log
+contrib\uncfl                   - cfl unpacking utility
+src                             - sources to the CFL library
+makecfl                         - sources to the makecfl utility
+testcfl                         - sources to the testcfl testing tool
+bin\makecfl.exe                 - precompiled win32 makecfl with zlib
+bin\uncfl.exe                   - precompiled win32 uncfl util
+include                         - include files for the CFL library
+example\hello.ini               - example ini file
+example\hello.txt               - example data file
+example\hello.cpp               - example source file
+example\readme.txt              - readme for the example
+example\vcmake.bat              - visual C example making batch file
 
-
-See cfl3.cpp for usage and other documentation.
+See cfl3.h for usage and other documentation.

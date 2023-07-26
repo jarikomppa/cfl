@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "cfl3.h"
-
 ///////////////////////////////////////////////
 // Copyright
 ///////////////////////////////////////////////
@@ -30,7 +26,7 @@
 //        misrepresented as being the original software.
 //     3. This notice may not be removed or altered from any source distribution.
 // 
-// (eg. same as ZLIB license)
+// (ie. same as ZLIB license)
 // 
 //
 ///////////////////////////////////////////////
@@ -39,42 +35,49 @@
 //
 ///////////////////////////////////////////////
 
-static const int TESTDATA_BYTES=1024*1024+1;
+#include <stdio.h>
+#include <stdlib.h>
+#include "CFL.h"
+#include "CFLMaker.h"
+#include "CFLEnumerator.h"
+#include "CFLResourceFilter.h"
 
-CFLMaker * maker;
-CFL * cfl;
-char * testdata;
+static const int TESTDATA_BYTES = 1024 * 1024 + 1;
+
+CFLMaker *gMaker;
+CFL *gCfl;
+char *gTestData;
 
 class handler_enum : public CFLEnumerator
 {
 public:
-    int stage;
-    virtual void infoCallback(unsigned int tag, const char * infostring, const char * shortname);
+    int mStage;
+    virtual void infoCallback(unsigned int aTag, const char *aInfoString, const char *aShortName);
 };
 
-void test_data(const char * fname)
+void test_data(const char *aFilename)
 {
-    printf("\n- Testing '%s'.. ",fname);
-    if (!cfl->fileExists(fname))
+    printf("\n- Testing '%s'.. ", aFilename);
+    if (!gCfl->fileExists(aFilename))
     {
         printf("error: file not found");
         return;
     }
     printf("file ok");
     int size;
-    char * d;
-    d=cfl->getFile(fname,size);
-    if (size!=TESTDATA_BYTES)
+    char *d;
+    d = gCfl->getFile(aFilename, size);
+    if (size != TESTDATA_BYTES)
     {
-        printf(", size mismatch (reported %d)",size);
+        printf(", size mismatch (reported %d)", size);
         return;
     }
     printf(", size ok");
-    for (int i=0;i<TESTDATA_BYTES;i++)
+    for (int i = 0; i < TESTDATA_BYTES; i++)
     {
-        if ((d[i]&0xff)!=(testdata[i]&0xff))
+        if ((d[i] & 0xff) != (gTestData[i] & 0xff))
         {
-            printf(", data mismatch (at position %d)",i);
+            printf(", data mismatch (at position %d)", i);
             return;
         }
     }
@@ -82,69 +85,78 @@ void test_data(const char * fname)
     delete[] d;
 }
 
-void handler_enum::infoCallback(unsigned int tag, const char * infostring, const char * shortname)
+void handler_enum::infoCallback(unsigned int aTag, const char *aInfoString, const char *aShortName)
 {
-    if (stage==0)
+    if (mStage == 0)
     {
-        printf("\n- Processing with '%s'.. ",shortname);
-        int size=maker->store(shortname,testdata,TESTDATA_BYTES,tag);
-        printf("%d bytes (%3.3f%%)",size,size*100.0f/TESTDATA_BYTES);
+        printf("\n- Processing with '%s'.. ", aShortName);
+        int size=gMaker->store(aShortName, gTestData, TESTDATA_BYTES, aTag);
+        printf("%d bytes (%3.3f%%)", size, size * 100.0f / TESTDATA_BYTES);
     } 
     else
     {
-        test_data(shortname);
+        test_data(aShortName);
     }
 }
 
 void generate_testdata()
 {
-    testdata=new char[TESTDATA_BYTES];
-    int a,b,c;
-    a=10;
-    b=20;
-    c=30;
-    for (int i=0;i<TESTDATA_BYTES;i++)
+    gTestData = new char[TESTDATA_BYTES];
+    int a, b, c;
+    a = 10;
+    b = 20;
+    c = 30;
+    for (int i = 0; i < TESTDATA_BYTES; i++)
     {
-        c+=b>>12;
-        b+=a>>12;
-        a+=1;
-        testdata[i]=c>>12;
+        c += b >> 12;
+        b += a >> 12;
+        a += 1;
+        gTestData[i] = c >> 12;
     }
 }
 
-int main(int parc, char ** pars)
+int main(int parc, char **pars)
 {
-    setbuf(stdout,NULL);
-    printf("TestCFL\nCFL testing tool\n\n");
+    setbuf(stdout, NULL);
+    printf("TestCFL\n"
+           "CFL testing tool\n\n");
+    
     printf("\n- Generating test data.. ");
     generate_testdata();
     printf("%d bytes",TESTDATA_BYTES);
+
     printf("\n- Creating CFL..");
-    maker=CFLMaker::create("testcfl.cfl");
+    gMaker=CFLMaker::create("testcfl.cfl");
     handler_enum e;
-    e.stage=0;
-    CFLResourceHandler::enumerateHandlers(&e);
+    e.mStage=0;
+    CFLResourceFilter::enumerateHandlers(&e);
+    
     printf("\n- Processing with 'find best'.. ");
-    int size=maker->store("find best",testdata,TESTDATA_BYTES,CFLCOMPRESS_BEST);
-    printf("%d bytes (%3.3f%%)",size,size*100.0f/TESTDATA_BYTES);
+    int size = gMaker->store("find best", gTestData, TESTDATA_BYTES, CFLCOMPRESS_BEST);
+    printf("%d bytes (%3.3f%%)", size, size * 100.0f / TESTDATA_BYTES);
+    
     printf("\n- Closing CFL");
-    maker->finish(CFLCOMPRESS_BEST);
+    gMaker->finish(CFLCOMPRESS_BEST);
+    
     printf("\n- Mounting CFL.. ");    
-    cfl=CFL::create("testcfl.cfl");
-    if (cfl==NULL)
+    gCfl = CFL::create("testcfl.cfl");
+    if (gCfl == NULL)
     {
         printf("Failed!");
-        delete[] testdata;
+        delete[] gTestData;
         return 1;
     }
     printf("OK");
-    e.stage=1;
-    CFLResourceHandler::enumerateHandlers(&e);
+
+    e.mStage = 1;
+    CFLResourceFilter::enumerateHandlers(&e);
     test_data("find best");
+
     printf("\n- Closing CFL");
-    delete cfl;    
+    delete gCfl;    
+
     printf("\n(you may delete testcfl.cfl)");
     printf("\n");
-    delete[] testdata;
+    delete[] gTestData;
     return 0;
 }

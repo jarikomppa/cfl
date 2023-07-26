@@ -1,0 +1,14 @@
+Release 3
+ - Added Jetro Lauha's uncfl (contrib/uncfl)
+ - Source split by classes, parameters prefixed by a, members 
+   prefixed by m, plus other generic clean-ups.
+ - getFilePtr now returns correct pointer (was off by 4 bytes)
+ - ZLIB stuff finally actually tested with 1.1.3 - couple 
+   typecasts were still missing
+
+Release 2
+ - delta preprocessors added
+ - zlib unit now works with zlib 1.1.3
+ 
+Release 1
+ - Initial release
