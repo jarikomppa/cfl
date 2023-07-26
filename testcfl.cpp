@@ -39,7 +39,7 @@
 //
 ///////////////////////////////////////////////
 
-static const int TESTDATA_BYTES=1024*1024;
+static const int TESTDATA_BYTES=1024*1024+1;
 
 CFLMaker * maker;
 CFL * cfl;

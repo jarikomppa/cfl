@@ -14,6 +14,7 @@
 // This source file defines the zlib compressor, and it self-registers
 // itself to cfl3. No header file is needed.
 //
+// 7.5.2001: Changed to work with zlib 1.1.3
 
 class CFLRH_Zlib : public CFLResourceHandler
 {
@@ -55,7 +56,7 @@ void CFLRH_Zlib::process(char * datain, char ** dataout, unsigned int datainsize
         dataoutsize=0;
         return;
     }        
-    if (compress(data,(unsigned long*)&dataoutsize,datain,datainsize)>=0) // negative values are errors
+    if (compress(data,(unsigned long*)&dataoutsize,(const char*)datain,datainsize)>=0) // negative values are errors
     {
         // We also want to store the length in the beginning of the block, since we
         // need it when decompressing.
@@ -87,8 +88,10 @@ void CFLRH_Zlib::reverseProcess(char *datain, char ** dataout, unsigned int data
         *dataout=NULL;
         dataoutsize=0;
         return;
-    }        
-    if (uncompress(data,(unsigned long*)&dataoutsize,datain+4,datainsize-4)>=0) // negative values are errors
+    } 
+    // ZLIB 1.1.3 gives out Z_BUF_ERROR even if no error on decompress.
+    int res=uncompress(data,(unsigned long*)&dataoutsize,(const char*)(datain+4),datainsize-4);
+    if (res==Z_BUF_ERROR || res>=0) // negative values are errors
     {
         *dataout=new char[dataoutsize];
         if (*dataout==NULL)

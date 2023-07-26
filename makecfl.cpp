@@ -46,6 +46,10 @@
 // system used. Some work is needed in order to compile under *nix, for instance.
 //
 ///////////////////////////////////////////////
+//
+// Changes:
+// r2 - ini file is now created as "w" instead of "wb"
+
 
 
 // This class splits input string into handy tokens.
@@ -244,7 +248,7 @@ void printhelp()
 void buildini(char * fname, char * filemask)
 {
     FILE * f;
-    f=fopen(fname,"wb");
+    f=fopen(fname,"w");
     if (f==NULL)
     {
         printf("Unable to open '%s' for writing.\n",fname);
