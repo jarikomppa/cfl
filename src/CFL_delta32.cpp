@@ -88,8 +88,15 @@ CFLRH_Delta32::CFLRH_Delta32()
 
 void CFLRH_Delta32::process(char *aDataIn, char **aDataOut, unsigned int aDataInSize, unsigned int &aDataOutSize)
 {
-    long *din = (long*)aDataIn;
-    long *dout = (long*)new char[aDataInSize];
+    long* din = NULL;
+    long* dout = NULL;
+    unsigned int dOutArraySize = aDataInSize / 4;
+    if (aDataInSize % 4) {
+        // Prevent out of bounds.
+        dOutArraySize++;
+    }
+    din = (long*)aDataIn;
+    dout = (long*)new long[dOutArraySize];
     if (dout == NULL)
     {
         *aDataOut = NULL;
@@ -111,8 +118,15 @@ void CFLRH_Delta32::process(char *aDataIn, char **aDataOut, unsigned int aDataIn
 
 void CFLRH_Delta32::reverseProcess(char *aDataIn, char **aDataOut, unsigned int aDataInSize, unsigned int &aDataOutSize)
 {
-    long *din = (long*)aDataIn;
-    long *dout = (long*)new char[aDataInSize];
+    long* din = NULL;
+    long* dout = NULL;
+    unsigned int dOutArraySize = aDataInSize / 4;
+    if (aDataInSize % 4) {
+        // Prevent out of bounds.
+        dOutArraySize++;
+    }
+    din = (long*)aDataIn;
+    dout = (long*)new long[dOutArraySize];
     if (dout == NULL)
     {
         *aDataOut = NULL;
