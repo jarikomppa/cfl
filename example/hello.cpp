@@ -2,24 +2,27 @@
 #include <stdlib.h>
 #include "cfl.h"
 
-void main(void)
+int main(void)
 {
     CFL * cfl = new CFL();
     if (!cfl) 
     {
         printf("Unable to crate CFL object.");
-        return;
+        return -1;
     }        
     if (!cfl->openLibrary("hello.cfl"))
     {
         printf("Unable to open CFL file.");
-        return;
+        delete cfl;
+        return -2;
     }    
-    if (cfl->exists("hello.txt"))    
+    if (cfl->fileExists("hello.txt"))
     {
         printf("Cfl does not contain hello.txt file.");
-        return;
+        delete cfl;
+        return -3;
     }
     printf("%s",cfl->getFile("hello.txt"));
     delete cfl;
+    return 0;
 }
