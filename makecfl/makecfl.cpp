@@ -264,6 +264,7 @@ void buildcfl(char * inifile)
     if (f == NULL)
     {
         printf("Unable to open '%s' for reading.\n", inifile);
+        return;
     }
     fseek(f, 0, SEEK_END);
     filesize = ftell(f);
