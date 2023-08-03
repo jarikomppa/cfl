@@ -56,7 +56,7 @@ set( COMPRESSED_FILE_LIBRARY_INCLUDES
 if(CFL_BUILD_ZLIB)
 	list(APPEND COMPRESSED_FILE_LIBRARY_SOURCE "src/CFL_zlib.cpp")
 endif()
-add_library(CompressedFileLibrary STATIC ${COMPRESSED_FILE_LIBRARY_SOURCE})
+add_library(CompressedFileLibrary STATIC ${COMPRESSED_FILE_LIBRARY_SOURCE} ${COMPRESSED_FILE_LIBRARY_INCLUDES})
 set_property(TARGET CompressedFileLibrary PROPERTY CXX_STANDARD 98)
 
 target_include_directories(CompressedFileLibrary PUBLIC
@@ -97,9 +97,27 @@ endif()
 if(CFL_BUILD_TESTCFL)
 	# Test Program for Compressed File Library.
 	add_executable(TestCFL "testcfl/testcfl.cpp")
+	set_property(TARGET TestCFL PROPERTY CXX_STANDARD 98)
 	target_link_libraries(TestCFL   CompressedFileLibrary)
 	if(MSVC)
 		target_compile_definitions(TestCFL   PRIVATE _CRT_SECURE_NO_WARNINGS _CRT_NONSTDC_NO_WARNINGS)
+	endif()
+
+	#TODO: Figure out why C++ Linkers Optmize out the Compressors.
+	# The following Does work.
+	add_executable(TestCFL_Embed
+		"testcfl/testcfl.cpp"
+		${COMPRESSED_FILE_LIBRARY_SOURCE}
+		${COMPRESSED_FILE_LIBRARY_INCLUDES}
+	)
+	set_property(TARGET TestCFL_Embed PROPERTY CXX_STANDARD 98)
+	target_include_directories(TestCFL_Embed PUBLIC
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/>
+		$<INSTALL_INTERFACE:include/> 
+	)
+	if(MSVC)
+		#Visual Studio deprecated a lot of old C++ standard functions.
+		target_compile_definitions(TestCFL_Embed PRIVATE _CRT_SECURE_NO_WARNINGS _CRT_NONSTDC_NO_WARNINGS)
 	endif()
 endif()
 
@@ -107,6 +125,7 @@ if (false AND CFL_BUILD_EXAMPLES AND CFL_BUILD_MAKECFL)
 	#TODO: This needs fixed to work correctly.
 	# Example Project.
 	add_executable(HelloFromCompressedFileLibrary "example/hello.cpp")
+	set_property(TARGET HelloFromCompressedFileLibrary PROPERTY CXX_STANDARD 98)
 	target_link_libraries(HelloFromCompressedFileLibrary  CompressedFileLibrary)
 	if(MSVC)
 		target_compile_definitions(HelloFromCompressedFileLibrary  PRIVATE _CRT_SECURE_NO_WARNINGS _CRT_NONSTDC_NO_WARNINGS)
