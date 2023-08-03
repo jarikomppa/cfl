@@ -49,7 +49,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#ifdef _WIN32
 #include <io.h>
+#endif
 #include "CFL.h"
 #include "CFLEnumerator.h"
 #include "CFLResourceFilter.h"
