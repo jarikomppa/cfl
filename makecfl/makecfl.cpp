@@ -220,7 +220,13 @@ void buildini(char * fname, char * filemask)
         ";\n",defaultcflname);
    
 #ifdef _WIN32
+    //TODO: This should really be intptr_t.
+    // Visual Studio 2022 uses intptr_t for hFile.
+#if _WIN64
+    __int64 hFile;
+#else
     long hFile;
+#endif
     struct _finddata_t fileinfo;
     if ((hFile = _findfirst( filemask, &fileinfo )) == -1L)
     {
