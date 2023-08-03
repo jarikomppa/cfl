@@ -49,7 +49,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#ifdef _WIN32
 #include <io.h>
+#endif
 #include "CFL.h"
 #include "CFLEnumerator.h"
 #include "CFLResourceFilter.h"
@@ -218,7 +220,13 @@ void buildini(char * fname, char * filemask)
         ";\n",defaultcflname);
    
 #ifdef _WIN32
+    //TODO: This should really be intptr_t.
+    // Visual Studio 2022 uses intptr_t for hFile.
+#if _WIN64
+    __int64 hFile;
+#else
     long hFile;
+#endif
     struct _finddata_t fileinfo;
     if ((hFile = _findfirst( filemask, &fileinfo )) == -1L)
     {
@@ -256,6 +264,7 @@ void buildcfl(char * inifile)
     if (f == NULL)
     {
         printf("Unable to open '%s' for reading.\n", inifile);
+        return;
     }
     fseek(f, 0, SEEK_END);
     filesize = ftell(f);
