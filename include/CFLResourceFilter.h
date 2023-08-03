@@ -84,9 +84,9 @@ protected:
     //! Static method to register handler
     static void registerHandler(CFLResourceFilter *aHandler);
     //! process (eg, compress, encrypt..) data 
-    virtual void process(char *aDataIn, char **aDataOut, unsigned int aDataInSize, unsigned int &aDataOutSize) = 0;
+    virtual void process(char *aDataIn, char **aDataOut, unsigned int aDataInSize, unsigned int &aDataOutSize);
     //! reverse process data (eg. decompress, decrypt..) data
-    virtual void reverseProcess(char *aDataIn, char **aDataOut, unsigned int aDataInSize, unsigned int &aDataOutSize) = 0;
+    virtual void reverseProcess(char *aDataIn, char **aDataOut, unsigned int aDataInSize, unsigned int &aDataOutSize);
     //! Finds handler for a tag
     static CFLResourceFilter * findHandler(unsigned int aTag);
     //! Sets the cipher key.

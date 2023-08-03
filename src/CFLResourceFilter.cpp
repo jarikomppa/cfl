@@ -323,3 +323,14 @@ void CFLResourceFilter::setCipherKey(void * aKey)
 {
     // do nothing by default
 }
+
+
+void CFLResourceFilter::process(char* aDataIn, char** aDataOut, unsigned int aDataInSize, unsigned int& aDataOutSize)
+{
+    // do nothing by default
+}
+//! reverse process data (eg. decompress, decrypt..) data
+void CFLResourceFilter::reverseProcess(char* aDataIn, char** aDataOut, unsigned int aDataInSize, unsigned int& aDataOutSize)
+{
+    // do nothing by default
+}
